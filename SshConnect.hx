@@ -26,31 +26,37 @@ typedef Props = {
 	var color:{connected:String, disconnected:String};
 }
 
+@:name('ssh-connect')
 class SshConnect extends IdeckiaAction {
 	var execPath:String;
 
 	var executingProcess:ChildProcessObject;
 
-	override public function init(initialState:ItemState) {
-		if (props.execPath == null) {
-			var envPath = Sys.getEnv('PATH').toLowerCase();
+	override public function init(initialState:ItemState):js.lib.Promise<ItemState> {
+		return new js.lib.Promise((resolve, reject) -> {
+			if (props.execPath == null) {
+				var envPath = Sys.getEnv('PATH').toLowerCase();
 
-			if (envPath.indexOf('putty') == -1) {
-				server.dialog(DialogType.Error,
-					'Could not find PuTTY (default) in the PATH enviroment variable. Configure your ssh executable with execPath property.');
-				return;
+				if (envPath.indexOf('putty') == -1) {
+					var msg = 'Could not find PuTTY (default) in the PATH enviroment variable. Configure your ssh executable with execPath property.';
+					server.dialog(DialogType.Error, msg);
+					reject(msg);
+				}
+
+				execPath = 'putty -ssh';
+			} else {
+				execPath = props.execPath;
 			}
 
-			execPath = 'putty -ssh';
-		} else {
-			execPath = props.execPath;
-		}
+			if (props.alias == null)
+				props.alias = initialState.text;
 
-		if (props.alias == null)
-			props.alias = initialState.text;
+			if (props.portForwardType != null)
+				props.portForwardType = props.portForwardType.charAt(0).toUpperCase();
 
-		if (props.portForwardType != null)
-			props.portForwardType = props.portForwardType.charAt(0).toUpperCase();
+			initialState.bgColor = props.color.disconnected;
+			resolve(initialState);
+		});
 	}
 
 	public function execute(currentState:ItemState):js.lib.Promise<ItemState> {

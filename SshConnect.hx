@@ -39,7 +39,7 @@ class SshConnect extends IdeckiaAction {
 
 				if (envPath.indexOf('putty') == -1) {
 					var msg = 'Could not find PuTTY (default) in the PATH enviroment variable. Configure your ssh executable with execPath property.';
-					server.dialog(DialogType.Error, msg);
+					server.dialog.error(msg);
 					reject(msg);
 				}
 
@@ -72,7 +72,7 @@ class SshConnect extends IdeckiaAction {
 
 			if (executingProcess == null) {
 				var cmd = buildCommand();
-				server.log('Connecting with ssh command: [${cmd}]');
+				server.log.debug('Connecting with ssh command: [${cmd}]');
 				executingProcess = ChildProcess.spawn(cmd, options);
 				executingProcess.unref();
 				executingProcess.on('close', () -> {
@@ -84,7 +84,7 @@ class SshConnect extends IdeckiaAction {
 
 				currentState.bgColor = props.color.connected;
 			} else {
-				server.log('Disconnecting [${props.alias}]');
+				server.log.debug('Disconnecting [${props.alias}]');
 				killProcess(executingProcess.pid);
 				currentState.bgColor = props.color.disconnected;
 			}
@@ -117,7 +117,7 @@ class SshConnect extends IdeckiaAction {
 		if (Sys.systemName() == "Windows") {
 			ChildProcess.exec('taskkill /PID ${pid} /T /F', (error, _, _) -> {
 				if (error != null) {
-					server.dialog(DialogType.Error, 'Error killing process: $error');
+					server.dialog.error('Error killing process: $error');
 				}
 			});
 		} else {

@@ -35,6 +35,7 @@ jobs:
       run: |
         mkdir ${{ env.CMD_NAME }}
         mv index.js ${{ env.CMD_NAME }}
+        mv presets.json ${{ env.CMD_NAME }}
         mv readme.md ${{ env.CMD_NAME }}
         zip -r ${{ env.CMD_NAME }} ${{ env.CMD_NAME }}
 

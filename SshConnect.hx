@@ -27,6 +27,7 @@ typedef Props = {
 }
 
 @:name('ssh-connect')
+@:description('Connect to SSH in a simple and fast way.')
 class SshConnect extends IdeckiaAction {
 	var execPath:String;
 

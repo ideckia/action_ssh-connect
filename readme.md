@@ -22,9 +22,9 @@ Create connections via ssh (it is using PuTTY atm)
 | ----- |----- | ----- | ----- | ----- |
 | alias | String | null | Optional name for the connection. If not provided the text of the state will be use as alias (if any). | null |
 | execPath | String | null | Custom SSH executable path. If omitted, will look for 'putty' in PATH environment variable. | null |
-| portForwardType | String | null | Port-forwarding type | [local,remote,dynamic] |
+| portForwardType | String | '' | Port-forwarding type | ['', 'local', 'remote', 'dynamic'] |
 | localPort | UInt | null | Local port | null |
-| remoteHost | String | null | Remote host name or IP (with port) which will be forwarded to through the sshServer (if portForwardType is not null) | null |
+| remoteHost | String | null | Remote host name or IP (with port) which will be forwarded to through the sshServer (if portForwardType is not empty) | null |
 | sshServer | String | null | The SSH server (with port) | null |
 | sshUser | String | null | SSH user | null |
 | sshPassword | String | null | SSH password | null |

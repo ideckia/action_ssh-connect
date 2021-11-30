@@ -10,11 +10,11 @@ typedef Props = {
 	var alias:String;
 	@:editable("Custom SSH executable path. If omitted, will look for 'putty' in PATH environment variable.")
 	var execPath:String;
-	@:editable("Port-forwarding type", null, ["local", "remote", "dynamic"])
+	@:editable("Port-forwarding type", '', ['', "local", "remote", "dynamic"])
 	var portForwardType:String;
 	@:editable("Local port")
 	var localPort:UInt;
-	@:editable("Remote host name or IP (with port) which will be forwarded to through the sshServer (if portForwardType is not null)")
+	@:editable("Remote host name or IP (with port) which will be forwarded to through the sshServer (if portForwardType is not empty)")
 	var remoteHost:String;
 	@:editable("The SSH server (with port)")
 	var sshServer:String;
@@ -30,6 +30,7 @@ typedef Props = {
 @:description('Connect to SSH in a simple and fast way.')
 class SshConnect extends IdeckiaAction {
 	var execPath:String;
+	var portForwardType:String;
 
 	var executingProcess:ChildProcessObject;
 
@@ -52,8 +53,8 @@ class SshConnect extends IdeckiaAction {
 			if (props.alias == null)
 				props.alias = initialState.text;
 
-			if (props.portForwardType != null)
-				props.portForwardType = props.portForwardType.charAt(0).toUpperCase();
+			if (props.portForwardType != '')
+				portForwardType = props.portForwardType.charAt(0).toUpperCase();
 
 			initialState.bgColor = props.color.disconnected;
 			resolve(initialState);
@@ -97,8 +98,8 @@ class SshConnect extends IdeckiaAction {
 	function buildCommand() {
 		var cmd = execPath;
 		cmd += ' ';
-		if (props.portForwardType != null) {
-			cmd += '-${props.portForwardType}';
+		if (portForwardType != null) {
+			cmd += '-${portForwardType}';
 			cmd += ' ${props.localPort}:';
 			cmd += props.remoteHost;
 			cmd += ' ';

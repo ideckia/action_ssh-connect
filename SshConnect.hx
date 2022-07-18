@@ -41,7 +41,7 @@ class SshConnect extends IdeckiaAction {
 
 				if (envPath.indexOf('putty') == -1) {
 					var msg = 'Could not find PuTTY (default) in the PATH enviroment variable. Configure your ssh executable with execPath property.';
-					server.dialog.error(msg);
+					server.dialog.error('SSH error', msg);
 					reject(msg);
 				}
 
@@ -119,7 +119,7 @@ class SshConnect extends IdeckiaAction {
 		if (Sys.systemName() == "Windows") {
 			ChildProcess.exec('taskkill /PID ${pid} /T /F', (error, _, _) -> {
 				if (error != null) {
-					server.dialog.error('Error killing process: $error');
+					server.dialog.error('SSH error', 'Error killing process: $error');
 				}
 			});
 		} else {

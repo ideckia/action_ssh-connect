@@ -2,17 +2,17 @@
 	{
 		"name": "connect to RPi",
 		"props": {
-			"sshServer": "::raspberry-ip::",
-			"sshUser": "pi",
-			"sshPassword": "raspberry"
+			"ssh_server": "::raspberry-ip::",
+			"ssh_user": "pi",
+			"ssh_password": "raspberry"
 		}
 	},
 	{
 		"name": "connect to batocera",
 		"props": {
-			"sshServer": "BATOCERA",
-			"sshUser": "root",
-			"sshPassword": "linux"
+			"ssh_server": "BATOCERA",
+			"ssh_user": "root",
+			"ssh_password": "linux"
 		}
 	}
 ]

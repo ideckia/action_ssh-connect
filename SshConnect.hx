@@ -9,19 +9,19 @@ typedef Props = {
 	@:editable("Optional name for the connection. If not provided the text of the state will be use as alias (if any).")
 	var alias:String;
 	@:editable("Custom SSH executable path. If omitted, will look for 'putty' in PATH environment variable.")
-	var execPath:String;
+	var executable_path:String;
 	@:editable("Port-forwarding type", '', ['', "local", "remote", "dynamic"])
-	var portForwardType:String;
+	var port_forward_type:String;
 	@:editable("Local port")
-	var localPort:UInt;
-	@:editable("Remote host name or IP (with port) which will be forwarded to through the sshServer (if portForwardType is not empty)")
-	var remoteHost:String;
+	var local_port:UInt;
+	@:editable("Remote host name or IP (with port) which will be forwarded to through the ssh_server (if port_forward_type is not empty)")
+	var remote_host:String;
 	@:editable("The SSH server (with port)")
-	var sshServer:String;
+	var ssh_server:String;
 	@:editable("SSH user")
-	var sshUser:String;
+	var ssh_user:String;
 	@:editable("SSH password")
-	var sshPassword:String;
+	var ssh_password:String;
 	@:editable("Color definitions", {connected: 'ff00aa00', disconnected: 'ffaa0000'})
 	var color:{connected:String, disconnected:String};
 }
@@ -30,31 +30,31 @@ typedef Props = {
 @:description('Connect to SSH in a simple and fast way.')
 class SshConnect extends IdeckiaAction {
 	var execPath:String;
-	var portForwardType:String;
+	var port_forward_type:String;
 
 	var executingProcess:ChildProcessObject;
 
 	override public function init(initialState:ItemState):js.lib.Promise<ItemState> {
 		return new js.lib.Promise((resolve, reject) -> {
-			if (props.execPath == null) {
+			if (props.executable_path == null) {
 				var envPath = Sys.getEnv('PATH').toLowerCase();
 
 				if (envPath.indexOf('putty') == -1) {
-					var msg = 'Could not find PuTTY (default) in the PATH enviroment variable. Configure your ssh executable with execPath property.';
+					var msg = 'Could not find PuTTY (default) in the PATH enviroment variable. Configure your ssh executable with executable_path property.';
 					server.dialog.error('SSH error', msg);
 					reject(msg);
 				}
 
 				execPath = 'putty -ssh';
 			} else {
-				execPath = props.execPath;
+				execPath = props.executable_path;
 			}
 
 			if (props.alias == null)
 				props.alias = initialState.text;
 
-			if (props.portForwardType != '')
-				portForwardType = props.portForwardType.charAt(0).toUpperCase();
+			if (props.port_forward_type != '')
+				port_forward_type = props.port_forward_type.charAt(0).toUpperCase();
 
 			initialState.bgColor = props.color.disconnected;
 			resolve(initialState);
@@ -98,17 +98,17 @@ class SshConnect extends IdeckiaAction {
 	function buildCommand() {
 		var cmd = execPath;
 		cmd += ' ';
-		if (portForwardType != null) {
-			cmd += '-${portForwardType}';
-			cmd += ' ${props.localPort}:';
-			cmd += props.remoteHost;
+		if (port_forward_type != null) {
+			cmd += '-${port_forward_type}';
+			cmd += ' ${props.local_port}:';
+			cmd += props.remote_host;
 			cmd += ' ';
 		}
-		if (props.sshUser != null)
-			cmd += '${props.sshUser}@';
-		cmd += props.sshServer;
-		if (props.sshPassword != null)
-			cmd += ' -pw ${props.sshPassword}';
+		if (props.ssh_user != null)
+			cmd += '${props.ssh_user}@';
+		cmd += props.ssh_server;
+		if (props.ssh_password != null)
+			cmd += ' -pw ${props.ssh_password}';
 		if (props.alias != null)
 			cmd += ' -loghost "${props.alias}"';
 

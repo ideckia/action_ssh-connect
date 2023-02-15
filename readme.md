@@ -21,7 +21,7 @@ Create connections via ssh (it is using PuTTY atm)
 | Name | Type | Default | Description | Possible values |
 | ----- |----- | ----- | ----- | ----- |
 | alias | String | null | Optional name for the connection. If not provided the text of the state will be use as alias (if any). | null |
-| executable_path | String | null | Custom SSH executable path. If omitted, will look for 'putty' in PATH environment variable. | null |
+| executable_path | String | SSH executable path. | false | "putty -ssh" | null |
 | port_forward_type | String | '' | Port-forwarding type | ['', 'local', 'remote', 'dynamic'] |
 | local_port | UInt | null | Local port | null |
 | remote_host | String | null | Remote host name or IP (with port) which will be forwarded to through the ssh_server (if port_forward_type is not empty) | null |

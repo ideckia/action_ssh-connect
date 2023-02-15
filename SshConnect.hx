@@ -64,7 +64,11 @@ class SshConnect extends IdeckiaAction {
 					executingProcess = null;
 					server.updateClientState(currentState);
 				});
-				executingProcess.on('error', reject);
+				executingProcess.on('error', (error) -> {
+					var msg = 'Error connecting to ssh: $error';
+					server.dialog.error('SSH error', msg);
+					reject(msg);
+				});
 
 				currentState.bgColor = props.color.connected;
 			} else {

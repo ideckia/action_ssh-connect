@@ -8,7 +8,7 @@ using api.IdeckiaApi;
 typedef Props = {
 	@:editable("Optional name for the connection. If not provided the text of the state will be use as alias (if any).")
 	var alias:String;
-	@:editable("Custom SSH executable path. If omitted, will look for 'putty' in PATH environment variable.")
+	@:editable("SSH executable path.", "putty -ssh")
 	var executable_path:String;
 	@:editable("Port-forwarding type", '', ['', "local", "remote", "dynamic"])
 	var port_forward_type:String;
@@ -29,27 +29,12 @@ typedef Props = {
 @:name('ssh-connect')
 @:description('Connect to SSH in a simple and fast way.')
 class SshConnect extends IdeckiaAction {
-	var execPath:String;
 	var port_forward_type:String;
 
 	var executingProcess:ChildProcessObject;
 
 	override public function init(initialState:ItemState):js.lib.Promise<ItemState> {
 		return new js.lib.Promise((resolve, reject) -> {
-			if (props.executable_path == null) {
-				var envPath = Sys.getEnv('PATH').toLowerCase();
-
-				if (envPath.indexOf('putty') == -1) {
-					var msg = 'Could not find PuTTY (default) in the PATH enviroment variable. Configure your ssh executable with executable_path property.';
-					server.dialog.error('SSH error', msg);
-					reject(msg);
-				}
-
-				execPath = 'putty -ssh';
-			} else {
-				execPath = props.executable_path;
-			}
-
 			if (props.alias == null)
 				props.alias = initialState.text;
 
@@ -63,9 +48,6 @@ class SshConnect extends IdeckiaAction {
 
 	public function execute(currentState:ItemState):js.lib.Promise<ItemState> {
 		return new js.lib.Promise((resolve, reject) -> {
-			if (execPath == null)
-				reject('No SSH command found. Define it in the action properties (execPath).');
-
 			var options:ChildProcessSpawnOptions = {
 				shell: true,
 				detached: true,
@@ -96,7 +78,7 @@ class SshConnect extends IdeckiaAction {
 	}
 
 	function buildCommand() {
-		var cmd = execPath;
+		var cmd = props.executable_path;
 		cmd += ' ';
 		if (port_forward_type != null) {
 			cmd += '-${port_forward_type}';

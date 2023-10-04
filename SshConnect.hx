@@ -22,7 +22,6 @@ typedef Props = {
 	var ssh_user:String;
 	@:editable("SSH password")
 	var ssh_password:String;
-	@:editable("Color definitions", {connected: 'ff00aa00', disconnected: 'ffaa0000'})
 	var color:{connected:String, disconnected:String};
 }
 
@@ -40,6 +39,14 @@ class SshConnect extends IdeckiaAction {
 
 			if (props.port_forward_type != '')
 				port_forward_type = props.port_forward_type.charAt(0).toUpperCase();
+
+			if (props.color == null) {
+				var colorData = getColorData('colors.json');
+				if (colorData != null)
+					props.color = colorData;
+				else
+					props.color = Macros.getColorData('colors.json');
+			}
 
 			initialState.bgColor = props.color.disconnected;
 			resolve(initialState);
@@ -113,5 +120,13 @@ class SshConnect extends IdeckiaAction {
 			// If pid is less than -1, then sig is sent to every process in the process group whose ID is -pid.
 			js.Node.process.kill(-pid, 'SIGKILL');
 		}
+	}
+
+	public static function getColorData(name:String) {
+		var filePath:String = haxe.io.Path.join([js.Node.__dirname, name]);
+
+		if (!sys.FileSystem.exists(filePath))
+			return null;
+		return haxe.Json.parse(sys.io.File.getContent(filePath));
 	}
 }

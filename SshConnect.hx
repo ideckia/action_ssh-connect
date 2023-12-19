@@ -1,5 +1,6 @@
 package;
 
+import api.action.Data;
 import js.node.ChildProcess;
 import js.node.child_process.ChildProcess as ChildProcessObject;
 
@@ -28,6 +29,11 @@ typedef Props = {
 @:name('ssh-connect')
 @:description('Connect to SSH in a simple and fast way.')
 class SshConnect extends IdeckiaAction {
+	static var DEFAULT_COLORS:{
+		connected:String,
+		disconnected:String
+	} = Data.embedJson('colors.json');
+
 	var port_forward_type:String;
 
 	var executingProcess:ChildProcessObject;
@@ -41,11 +47,11 @@ class SshConnect extends IdeckiaAction {
 				port_forward_type = props.port_forward_type.charAt(0).toUpperCase();
 
 			if (props.color == null) {
-				var colorData = getColorData('colors.json');
+				var colorData = Data.getJson('colors.json');
 				if (colorData != null)
 					props.color = colorData;
 				else
-					props.color = Macros.getColorData('colors.json');
+					props.color = DEFAULT_COLORS;
 			}
 
 			initialState.bgColor = props.color.disconnected;
@@ -53,7 +59,7 @@ class SshConnect extends IdeckiaAction {
 		});
 	}
 
-	public function execute(currentState:ItemState):js.lib.Promise<ItemState> {
+	public function execute(currentState:ItemState):js.lib.Promise<ActionOutcome> {
 		return new js.lib.Promise((resolve, reject) -> {
 			var options:ChildProcessSpawnOptions = {
 				shell: true,
@@ -84,7 +90,7 @@ class SshConnect extends IdeckiaAction {
 				currentState.bgColor = props.color.disconnected;
 			}
 
-			resolve(currentState);
+			resolve(new ActionOutcome({state: currentState}));
 		});
 	}
 
@@ -120,13 +126,5 @@ class SshConnect extends IdeckiaAction {
 			// If pid is less than -1, then sig is sent to every process in the process group whose ID is -pid.
 			js.Node.process.kill(-pid, 'SIGKILL');
 		}
-	}
-
-	public static function getColorData(name:String) {
-		var filePath:String = haxe.io.Path.join([js.Node.__dirname, name]);
-
-		if (!sys.FileSystem.exists(filePath))
-			return null;
-		return haxe.Json.parse(sys.io.File.getContent(filePath));
 	}
 }

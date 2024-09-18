@@ -1,33 +1,33 @@
 package;
 
-import api.action.Data;
 import js.node.ChildProcess;
 import js.node.child_process.ChildProcess as ChildProcessObject;
 
 using api.IdeckiaApi;
 
 typedef Props = {
-	@:editable("Optional name for the connection. If not provided the text of the state will be use as alias (if any).")
+	@:editable("prop_alias")
 	var alias:String;
-	@:editable("SSH executable path.", "putty -ssh")
+	@:editable("prop_executable_path", "putty -ssh")
 	var executable_path:String;
-	@:editable("Port-forwarding type", '', ['', "local", "remote", "dynamic"])
+	@:editable("prop_port_forward_type", '', ['', "local", "remote", "dynamic"])
 	var port_forward_type:String;
-	@:editable("Local port")
+	@:editable("prop_local_port")
 	var local_port:UInt;
-	@:editable("Remote host name or IP (with port) which will be forwarded to through the ssh_server (if port_forward_type is not empty)")
+	@:editable("prop_remote_host")
 	var remote_host:String;
-	@:editable("The SSH server (with port)")
+	@:editable("prop_ssh_server")
 	var ssh_server:String;
-	@:editable("SSH user")
+	@:editable("prop_ssh_user")
 	var ssh_user:String;
-	@:editable("SSH password")
+	@:editable("prop_ssh_password")
 	var ssh_password:String;
 	var color:{connected:String, disconnected:String};
 }
 
 @:name('ssh-connect')
-@:description('Connect to SSH in a simple and fast way.')
+@:description('action_description')
+@:localize
 class SshConnect extends IdeckiaAction {
 	static var DEFAULT_COLORS:{
 		connected:String,
@@ -47,7 +47,7 @@ class SshConnect extends IdeckiaAction {
 				port_forward_type = props.port_forward_type.charAt(0).toUpperCase();
 
 			if (props.color == null) {
-				var colorData = Data.getJson('colors.json');
+				var colorData = core.data.getJson('colors.json');
 				if (colorData != null)
 					props.color = colorData;
 				else
@@ -69,23 +69,23 @@ class SshConnect extends IdeckiaAction {
 
 			if (executingProcess == null) {
 				var cmd = buildCommand();
-				server.log.debug('Connecting with ssh command: [${cmd}]');
+				core.log.debug('Connecting with ssh command: [${cmd}]');
 				executingProcess = ChildProcess.spawn(cmd, options);
 				executingProcess.unref();
 				executingProcess.on('close', () -> {
 					currentState.bgColor = props.color.disconnected;
 					executingProcess = null;
-					server.updateClientState(currentState);
+					core.updateClientState(currentState);
 				});
 				executingProcess.on('error', (error) -> {
 					var msg = 'Error connecting to ssh: $error';
-					server.dialog.error('SSH error', msg);
+					core.dialog.error('SSH error', msg);
 					reject(msg);
 				});
 
 				currentState.bgColor = props.color.connected;
 			} else {
-				server.log.debug('Disconnecting [${props.alias}]');
+				core.log.debug('Disconnecting [${props.alias}]');
 				killProcess(executingProcess.pid);
 				currentState.bgColor = props.color.disconnected;
 			}
@@ -118,7 +118,7 @@ class SshConnect extends IdeckiaAction {
 		if (Sys.systemName() == "Windows") {
 			ChildProcess.exec('taskkill /PID ${pid} /T /F', (error, _, _) -> {
 				if (error != null) {
-					server.dialog.error('SSH error', 'Error killing process: $error');
+					core.dialog.error('SSH error', 'Error killing process: $error');
 				}
 			});
 		} else {

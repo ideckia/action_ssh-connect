@@ -1,0 +1,38 @@
+[
+	{
+		"id": "action_description",
+		"text": "SSH batera modu sinple eta azkarrean konektatu."
+	},
+	{
+		"id": "prop_alias",
+		"text": "Konexioarentzako aukerazko izena. Hutsik uzten bada, egoeraren testua eraibiliko da (baldin badago)."
+	},
+	{
+		"id": "prop_executable_path",
+		"text": "SSH exekutagarriaren bidea."
+	},
+	{
+		"id": "prop_port_forward_type",
+		"text": "Portu-aurreratze mota?"
+	},
+	{
+		"id": "prop_local_port",
+		"text": "Portu lokala"
+	},
+	{
+		"id": "prop_remote_host",
+		"text": "Urruneko ostalari izena edo IPa (portuarekin), 'ssh_server' zerbitzaritik bideratuko dena 'port_forward_type' hutsik ez badago"
+	},
+	{
+		"id": "prop_ssh_server",
+		"text": "SSH zerbitzaria (portuarekin)"
+	},
+	{
+		"id": "prop_ssh_user",
+		"text": "SSH erabiltzailea"
+	},
+	{
+		"id": "prop_ssh_password",
+		"text": "SSH pasahitza"
+	}
+]

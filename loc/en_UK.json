@@ -1,0 +1,38 @@
+[
+	{
+		"id": "action_description",
+		"text": "Connect to SSH in a simple and fast way."
+	},
+	{
+		"id": "prop_alias",
+		"text": "Optional name for the connection. If not provided the text of the state will be use as alias (if any)."
+	},
+	{
+		"id": "prop_executable_path",
+		"text": "SSH executable path."
+	},
+	{
+		"id": "prop_port_forward_type",
+		"text": "Port-forwarding type?"
+	},
+	{
+		"id": "prop_local_port",
+		"text": "Local port"
+	},
+	{
+		"id": "prop_remote_host",
+		"text": "Remote host name or IP (with port) which will be forwarded to through the ssh_server (if port_forward_type is not empty)"
+	},
+	{
+		"id": "prop_ssh_server",
+		"text": "The SSH server (with port)"
+	},
+	{
+		"id": "prop_ssh_user",
+		"text": "SSH user"
+	},
+	{
+		"id": "prop_ssh_password",
+		"text": "SSH password"
+	}
+]
